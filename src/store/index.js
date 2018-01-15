@@ -87,13 +87,24 @@ const actions = {
     Loading.show(spinner)
     context.commit('SET_DIARY_DATA_DEF')
     context.commit('SET_USER_DATA_DEF')
-    axios.post(REST_SERVER_ADDRESS + '/diary',
+    axios.post(REST_SERVER_ADDRESS + '/timetable/start',
       {sescookie: context.state.sescookie})
       .then(resp => {
         if (resp.status === 200) {
           Loading.hide()
-          Toast.create.positive('загрузка закончена')
-          context.commit('SET_DIARY_DATA', resp.data)
+          if (resp.data.serverStatus === 'ok') {
+            if (resp.data.session) {
+              Toast.create.positive('загрузка закончена')
+              context.commit('SET_DIARY_DATA', resp.data)
+            }
+            else {
+              Toast.create.negative('время сессии истекло')
+              context.commit('UNSET_SESSION_COOKIE')
+            }
+          }
+          else {
+            Toast.create.negative('ошибка сервера ( ')
+          }
         }
       })
       .catch(err => {
@@ -115,8 +126,19 @@ const actions = {
       .then(resp => {
         if (resp.status === 200) {
           Loading.hide()
-          Toast.create.positive('загрузка закончена )))')
-          context.commit('SET_DIARY_DATA', resp.data)
+          if (resp.data.serverStatus === 'ok') {
+            if (resp.data.session) {
+              Toast.create.positive('загрузка закончена')
+              context.commit('SET_DIARY_DATA', resp.data)
+            }
+            else {
+              Toast.create.negative('время сессии истекло')
+              context.commit('UNSET_SESSION_COOKIE')
+            }
+          }
+          else {
+            Toast.create.negative('ошибка сервера ( ')
+          }
         }
       })
       .catch(err => {
@@ -152,6 +174,10 @@ const mutations = {
     state.sescookie = data
     state.user.login = true
     console.log('state.user.login', state.user.login)
+  },
+  UNSET_SESSION_COOKIE (state) {
+    state.sescookie = ''
+    state.user.login = false
   },
   SET_DIARY_DATA_DEF (state) {
     state.diaryData = [{}, {}, {}, {}, {}, {}, {}]

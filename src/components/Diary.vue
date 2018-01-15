@@ -192,6 +192,16 @@ export default {
         this.dvisible.push(o)
       })
       console.log('dyadetail watcher', this.dvisible)
+    },
+    login: function (n) {
+      if (!n) {
+        this.$router.push({
+          path: '/',
+          params: {
+            hi: 'hi @at31 '
+          }
+        })
+      }
     }
   },
   computed: {
@@ -206,6 +216,9 @@ export default {
     },
     user () {
       return this.$store.state.user
+    },
+    login () {
+      return this.$store.state.user.login
     }
   },
   methods: {
