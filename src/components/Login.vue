@@ -1,17 +1,18 @@
 <template>
   <div>
     <h4>Timonovs2008</h4>
+    <h4>nTimonovs19</h4>
    <div class="row sm-gutter">
     <div class="col-3">
       <q-card >
-            <q-card-title>            
+            <q-card-title>
                login
             </q-card-title>
             <q-card-separator />
             <q-card-main>
                <q-input v-model="login" type="text" float-label="Имя пользователя" suffix="" clearable />
                <q-input v-model="pass" type="password" float-label="Пароль" />
-            </q-card-main>   
+            </q-card-main>
             <q-card-separator />
             <q-card-actions>
               <q-btn color="secondary" icon="fa-sign-in" @click="doLogin">
@@ -19,7 +20,7 @@
               </q-btn>
             </q-card-actions>
          </q-card>
-    </div>         
+    </div>
    </div>
 
   </div>
@@ -131,5 +132,5 @@ export default {
 .q-item
   font-size: 1.1rem
 .q-card
-  background-color: white 
+  background-color: white
 </style>
