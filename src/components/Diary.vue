@@ -20,7 +20,7 @@
    </div>
 
    <div class="row ">
-      <div class="col-lg-6 col-sm-12 col-md-12" v-for="data in daydetail">
+      <div class="col-lg-6 col-sm-12 col-md-12" v-for="data in daydetail" :key="data.index">
          <q-card >
             <q-card-title>
                {{data.title}}
@@ -29,10 +29,10 @@
               </q-btn>
             </q-card-title>
             <q-card-separator />
-            <q-card-main v-show="false">
-              <p>some text if i do it right</p>
+            <q-card-main v-show="!sdview">
+              <p>Расписание</p>
             </q-card-main>
-            <q-card-main v-show="true">
+            <q-card-main v-show="sdview">
                <q-list>
                  <q-list-header></q-list-header>
                  <q-item multiline v-for="item in data.data" >
@@ -83,13 +83,13 @@
             </q-card-main>
             <q-card-separator />
             <q-card-actions align="around">
-              <q-btn flat round small color="primary">
+              <q-btn flat round small color="primary" @click="sdview=!sdview">
                 <q-icon name="fa-clock-o" />
               </q-btn>
               <q-btn flat round small  color="primary">
                 <q-icon name="fa-comments" />
               </q-btn>
-              <q-btn flat round small  color="primary">
+              <q-btn flat round small  color="primary" @click="showLog">
                 <q-icon name="fa-info" />
               </q-btn>
             </q-card-actions>
@@ -160,6 +160,7 @@ export default {
   },
   data () {
     return {
+      sdview: true,
       dvisible: [],
       open: false,
       ndconfig: {
@@ -186,11 +187,14 @@ export default {
   },
   watch: {
     daydetail: function (n) {
-      n.forEach(el => {
-        let o = {}
-        o[el.title] = true
-        this.dvisible.push(o)
+      let dv = []
+      n.forEach((el) => {
+        let nm = el.indx
+        let obj = {}
+        obj[nm] = true
+        dv.push(obj)
       })
+      this.dvisible = dv
       console.log('dyadetail watcher', this.dvisible)
     },
     login: function (n) {
@@ -223,7 +227,7 @@ export default {
   },
   methods: {
     showLog (info) {
-      console.log(info)
+      console.log(this)
     },
     showModal (rating) {
       // console.log(cell)
