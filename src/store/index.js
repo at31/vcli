@@ -15,17 +15,19 @@ const REST_SERVER_ADDRESS = 'http://127.0.0.1:3000'
 // const REST_SERVER_ADDRESS = 'http://192.168.1.173:3000'
 
 const state = {
-  diaryData: [{}, {}, {}, {}, {}, {}, {}],
+  _diaryData: '', // [{}, {}, {}, {}, {}, {}, {}],
   gifLink: '',
   user: {
     login: false,
-    uid: ''
+    uid: '',
+    fio: ''
   },
   sescookie: '',
-  dairyData: {
+  diaryData: {
     currenrYear: '',
     prevDateLink: '',
-    nextDateLink: ''
+    nextDateLink: '',
+    pdata: ''
   },
   report: {
     htmldata: {}
@@ -87,7 +89,7 @@ const actions = {
     Loading.show(spinner)
     context.commit('SET_DIARY_DATA_DEF')
     context.commit('SET_USER_DATA_DEF')
-    axios.post(REST_SERVER_ADDRESS + '/timetable/start',
+    axios.post(REST_SERVER_ADDRESS + '/timetable/test', // '/timetable/start',
       {sescookie: context.state.sescookie})
       .then(resp => {
         if (resp.status === 200) {
@@ -180,24 +182,31 @@ const mutations = {
     state.user.login = false
   },
   SET_DIARY_DATA_DEF (state) {
-    state.diaryData = [{}, {}, {}, {}, {}, {}, {}]
+    state.diaryData = undefined// [{}, {}, {}, {}, {}, {}, {}]
     console.log('state.diaryData', state.diaryData)
   },
   SET_USER_DATA_DEF (state) {
     state.user.uid = ''
     state.user.fio = ''
+    /*
     state.dairyData.currenrYear = ''
     state.dairyData.prevDateLink = ''
     state.dairyData.nextDateLink = ''
+    */
   },
   SET_DIARY_DATA (state, data) {
-    console.log('==============data============', data.studentID)
-    state.diaryData = data.pdata
+    console.log('==============data============', data)
+    console.log('==============data state============', state.diaryData)
+    state.diaryData = Object.assign({}, data)
     state.user.uid = data.studentID
     state.user.fio = data.studentFIO
+    console.log('==============data user============', state.user)
+    console.log('==============data diaryData============', state.diaryData)
+    /*
     state.dairyData.currenrYear = data.currentYear
     state.dairyData.prevDateLink = data.prevDateLink
     state.dairyData.nextDateLink = data.nextDateLink
+    */
   },
   SET_GIPHY (state, data) {
     state.gifLink = data[0].images.original.url

@@ -2,7 +2,7 @@
   <div>
     <div class="row ">
       <q-chip icon="fa-info" color="primary">
-        {{dairyData.currenrYear}}
+        {{currentYear}}
       </q-chip>
     </div>
     <div class="row ">
@@ -19,8 +19,8 @@
     </q-btn>
    </div>
 
-   <div class="row ">
-      <div class="col-lg-6 col-sm-12 col-md-12" v-for="data in daydetail" :key="data.index">
+   <div class="row" v-if="diaryData">
+      <div class="col-lg-6 col-sm-12 col-md-12" v-for="data in diaryData.pdata" :key="data.index">
          <q-card >
             <q-card-title>
                {{data.title}}
@@ -29,10 +29,25 @@
               </q-btn>
             </q-card-title>
             <q-card-separator />
-            <q-card-main v-show="!sdview">
-              <p>Расписание</p>
+            <q-card-main v-show="data.selected">
+              <q-list>
+                <q-list-header></q-list-header>
+                <q-item multiline v-for="(lesson, indx) in data.schedule.lessons">
+                  <q-item-side>
+                    <q-chip color="light" class="text-black">
+                      {{indx+1}}
+                    </q-chip>
+                  </q-item-side>
+                  <q-item-main>
+                    <q-item-tile label>{{formatDate(lesson.beginning)}} - {{formatDate(lesson.ending)}}</q-item-tile>
+                    <q-item-tile sublabel>{{lesson.info.subjectname}} {{lesson.info.tablename}}</q-item-tile>
+                    <q-item-tile sublabel>{{lesson.info.classroom}}</q-item-tile>
+                    <q-item-tile sublabel>{{teacherFIO(lesson)}}</q-item-tile>
+                  </q-item-main>
+                </q-item>
+              </q-list>
             </q-card-main>
-            <q-card-main v-show="sdview">
+            <q-card-main v-show="!data.selected">
                <q-list>
                  <q-list-header></q-list-header>
                  <q-item multiline v-for="item in data.data" >
@@ -83,7 +98,7 @@
             </q-card-main>
             <q-card-separator />
             <q-card-actions align="around">
-              <q-btn flat round small color="primary" @click="sdview=!sdview">
+              <q-btn flat round small color="primary" @click="shDiarySchedule(data)">
                 <q-icon name="fa-clock-o" />
               </q-btn>
               <q-btn flat round small  color="primary">
@@ -160,6 +175,7 @@ export default {
   },
   data () {
     return {
+      selected: undefined,
       sdview: true,
       dvisible: [],
       open: false,
@@ -186,16 +202,8 @@ export default {
     }
   },
   watch: {
-    daydetail: function (n) {
-      let dv = []
-      n.forEach((el) => {
-        let nm = el.indx
-        let obj = {}
-        obj[nm] = true
-        dv.push(obj)
-      })
-      this.dvisible = dv
-      console.log('dyadetail watcher', this.dvisible)
+    diaryData: function (n) {
+
     },
     login: function (n) {
       if (!n) {
@@ -209,23 +217,50 @@ export default {
     }
   },
   computed: {
+    /*
     daydetail () {
       return this.$store.state.diaryData
     },
+    */
     gifLink () {
       return this.$store.state.gifLink
     },
-    dairyData () {
-      return this.$store.state.dairyData
+    diaryData () {
+      return this.$store.state.diaryData
     },
     user () {
       return this.$store.state.user
     },
     login () {
       return this.$store.state.user.login
+    },
+    currentYear () {
+      let cy = ''
+      if(!!this.$store.state.diaryData){
+        cy = this.$store.state.diaryData.currentYear
+      }
+      return cy
     }
   },
   methods: {
+    formatDate (str) {
+      return str.substring(0, 5)
+    },
+    teacherFIO (lesson) {
+      let fio = ''
+      if(!!lesson.teacher) {
+        fio = lesson.teacher[0]
+        fio = fio.fio
+        console.log(fio.fio)
+      }
+
+      return fio
+      /* let t = lesson.teacher[0]
+      return t[0].fio */
+    },
+    shDiarySchedule (data) {
+      this.$set(data, 'selected', !data.selected)
+    },
     showLog (info) {
       console.log(this)
     },
@@ -261,17 +296,17 @@ export default {
       return rrt
     },
     getNext () {
-      console.log('this.$store.state.dairyData.nextDateLink', this.$store.state.dairyData.nextDateLink)
+      console.log('this.$store.state.diaryData.nextDateLink', this.$store.state.diaryData.nextDateLink)
       console.log('this.$store.state.user', this.$store.state.user)
       this.$store.dispatch('getDiaryDataFR', {
         userID: this.$store.state.user.uid,
-        date: this.$store.state.dairyData.nextDateLink})
+        date: this.$store.state.diaryData.nextDateLink})
     },
     getPrev () {
       this.$store.dispatch('getDiaryDataFR',
         {
           userID: this.$store.state.user.uid,
-          date: this.$store.state.dairyData.prevDateLink
+          date: this.$store.state.diaryData.prevDateLink
         }
       )
     }
