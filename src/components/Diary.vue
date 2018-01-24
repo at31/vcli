@@ -236,7 +236,7 @@ export default {
     },
     currentYear () {
       let cy = ''
-      if(!!this.$store.state.diaryData){
+      if (this.$store.state.diaryData) {
         cy = this.$store.state.diaryData.currentYear
       }
       return cy
@@ -248,7 +248,7 @@ export default {
     },
     teacherFIO (lesson) {
       let fio = ''
-      if(!!lesson.teacher) {
+      if (lesson.teacher) {
         fio = lesson.teacher[0]
         fio = fio.fio
         console.log(fio.fio)
@@ -300,15 +300,17 @@ export default {
       console.log('this.$store.state.user', this.$store.state.user)
       this.$store.dispatch('getDiaryDataFR', {
         userID: this.$store.state.user.uid,
-        date: this.$store.state.diaryData.nextDateLink})
+        date: this.$store.state.diaryData.nextDateLink,
+        wd: this.$store.state.diaryData.wid
+      })
     },
     getPrev () {
       this.$store.dispatch('getDiaryDataFR',
         {
           userID: this.$store.state.user.uid,
-          date: this.$store.state.diaryData.prevDateLink
-        }
-      )
+          date: this.$store.state.diaryData.prevDateLink,
+          wd: this.$store.state.diaryData.wid
+        })
     }
   },
   created () {

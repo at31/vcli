@@ -27,7 +27,8 @@ const state = {
     currenrYear: '',
     prevDateLink: '',
     nextDateLink: '',
-    pdata: ''
+    pdata: '',
+    wd: ''
   },
   report: {
     htmldata: {}
@@ -94,19 +95,22 @@ const actions = {
       .then(resp => {
         if (resp.status === 200) {
           Loading.hide()
-          if (resp.data.serverStatus === 'ok') {
-            if (resp.data.session) {
-              Toast.create.positive('загрузка закончена')
-              context.commit('SET_DIARY_DATA', resp.data)
-            }
-            else {
+          if (!resp.data.error) {
+            Toast.create.positive('загрузка закончена')
+            context.commit('SET_DIARY_DATA', resp.data)
+          }
+          else {
+            if (resp.data.error_body.type === 'session') {
               Toast.create.negative('время сессии истекло')
               context.commit('UNSET_SESSION_COOKIE')
             }
+            else {
+              Toast.create.negative('ошибка обработки данных')
+            }
           }
-          else {
-            Toast.create.negative('ошибка сервера ( ')
-          }
+        }
+        else {
+          Toast.create.negative('что-то пошло не так (')
         }
       })
       .catch(err => {
@@ -119,28 +123,32 @@ const actions = {
     Loading.show(spinner)
     context.commit('SET_DIARY_DATA_DEF')
     context.commit('SET_USER_DATA_DEF')
-    axios.post(REST_SERVER_ADDRESS + '/timetable',
+    axios.post(REST_SERVER_ADDRESS + '/timetable/test1',
       {
         sescookie: context.state.sescookie,
         userID: data.userID,
-        date: data.date
+        date: data.date,
+        wd: data.wd
       })
       .then(resp => {
         if (resp.status === 200) {
           Loading.hide()
-          if (resp.data.serverStatus === 'ok') {
-            if (resp.data.session) {
-              Toast.create.positive('загрузка закончена')
-              context.commit('SET_DIARY_DATA', resp.data)
-            }
-            else {
+          if (!resp.data.error) {
+            Toast.create.positive('загрузка закончена')
+            context.commit('SET_DIARY_DATA', resp.data)
+          }
+          else {
+            if (!resp.data.error_body.type === 'session') {
               Toast.create.negative('время сессии истекло')
               context.commit('UNSET_SESSION_COOKIE')
             }
+            else {
+              Toast.create.negative('ошибка обработки данных')
+            }
           }
-          else {
-            Toast.create.negative('ошибка сервера ( ')
-          }
+        }
+        else {
+          Toast.create.negative('что-то пошло не так (')
         }
       })
       .catch(err => {

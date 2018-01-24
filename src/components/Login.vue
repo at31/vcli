@@ -3,7 +3,7 @@
     <h4>Timonovs2008</h4>
     <h4>nTimonovs19</h4>
    <div class="row sm-gutter">
-    <div class="col-3">
+    <div class="col-lg-12 col-sm-12 col-md-12">
       <q-card >
             <q-card-title>
                login
