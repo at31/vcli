@@ -12,7 +12,7 @@ const spinner = {
   messageColor: 'black'
 }
 const REST_SERVER_ADDRESS = 'http://127.0.0.1:3000'
-// const REST_SERVER_ADDRESS = 'http://192.168.1.173:3000'
+// const REST_SERVER_ADDRESS = 'http://93.157.144.178:3000'
 
 const state = {
   _diaryData: '', // [{}, {}, {}, {}, {}, {}, {}],
