@@ -11,7 +11,7 @@ const spinner = {
   message: '',
   messageColor: 'black'
 }
-const REST_SERVER_ADDRESS = 'http://127.0.0.1:3000'
+const REST_SERVER_ADDRESS = 'http://192.168.1.173:3000'
 // const REST_SERVER_ADDRESS = 'http://93.157.144.178:3000'
 
 const state = {
@@ -90,7 +90,7 @@ const actions = {
     Loading.show(spinner)
     context.commit('SET_DIARY_DATA_DEF')
     context.commit('SET_USER_DATA_DEF')
-    axios.post(REST_SERVER_ADDRESS + '/timetable/test', // '/timetable/start',
+    axios.post(REST_SERVER_ADDRESS + '/timetable/test2', // '/timetable/start',
       {sescookie: context.state.sescookie})
       .then(resp => {
         if (resp.status === 200) {
@@ -123,12 +123,13 @@ const actions = {
     Loading.show(spinner)
     context.commit('SET_DIARY_DATA_DEF')
     context.commit('SET_USER_DATA_DEF')
-    axios.post(REST_SERVER_ADDRESS + '/timetable/test1',
+    axios.post(REST_SERVER_ADDRESS + '/timetable/test2date',
       {
         sescookie: context.state.sescookie,
-        userID: data.userID,
+        studentID: data.userID,
         date: data.date,
-        wd: data.wd
+        wd: data.wd,
+        eduYearId: data.eduYearId
       })
       .then(resp => {
         if (resp.status === 200) {

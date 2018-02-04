@@ -24,16 +24,13 @@
          <q-card >
             <q-card-title>
                {{data.title}}
-               <q-btn slot="right" flat round color="white" @click="shDiarySchedule(data)">
-                 <q-icon name="fa-clock-o" />
-               </q-btn>
                <q-btn slot="right" flat round color="white" @click="">
-                <q-icon name="fa-share-alt" />
+                <q-icon name="fa-info" />
               </q-btn>
             </q-card-title>
             <q-card-separator />
             <q-card-main v-show="data.selected">
-              <!--q-list>
+              <q-list>
                 <q-list-header></q-list-header>
                 <q-item multiline v-for="(lesson, indx) in data.schedule.lessons">
                   <q-item-side>
@@ -48,22 +45,6 @@
                     <q-item-tile sublabel>{{teacherFIO(lesson)}}</q-item-tile>
                   </q-item-main>
                 </q-item>
-              </q-list-->
-              <q-list>
-                <q-list-header></q-list-header>
-                <q-item multiline v-for="(lesson, indx) in data.data">
-                  <q-item-side>
-                    <q-chip color="light" class="text-black">
-                      {{indx+1}}
-                    </q-chip>
-                  </q-item-side>
-                  <q-item-main>
-                    <q-item-tile label>{{formatDate(lesson.startDate)}} - {{formatDate(lesson.stopDate)}}</q-item-tile>
-                    <q-item-tile sublabel>{{lesson.subject.name}}</q-item-tile>
-                    <q-item-tile sublabel>{{lesson.room}}</q-item-tile>
-                    <q-item-tile sublabel>{{lesson.teacher.initials}}</q-item-tile>
-                  </q-item-main>
-                </q-item>
               </q-list>
             </q-card-main>
             <q-card-main v-show="!data.selected">
@@ -71,69 +52,52 @@
                  <q-list-header></q-list-header>
                  <q-item multiline v-for="item in data.data" >
                    <q-item-side><q-chip color="light" class="text-black">
-                      {{item.number}}
+                      {{item.dayNumber}}
                    </q-chip>
                  </q-item-side>
                    <q-item-main>
-                     <q-item-tile label>{{item.subject.name}}</q-item-tile>
-
-                     <q-item  class="no-border-bottom" v-if="item.theme!==null">
-                       <q-item-side>
-                         <q-item-tile color="secondary" icon="fa-star" />
-                       </q-item-side>
-                       <q-item-main>
-                         <q-item-tile sublabel class="item-italic">{{item.theme}}</q-item-tile>
-                       </q-item-main>
-                     </q-item>
-
-                     <q-item v-if="item.homework!=='' && item.homework!==null" class="no-border-bottom">
-                       <q-item-side>
-                         <q-item-tile color="primary" icon="fa-book" />
-                       </q-item-side>
-                       <q-item-main>
-                         <q-item-tile sublabel class="black-color">{{item.homework}}</q-item-tile>
-                       </q-item-main>
-                     </q-item>
-                     <q-btn round small flat color="primary" v-if="item.homeworkFiles.length>0">
+                     <q-item-tile label>{{item.dayLessons}}</q-item-tile>
+                     <q-item-tile sublabel>{{item.dayHW}}</q-item-tile>
+                     <q-btn round small flat color="primary" v-if="!item.dayFile==''">
                         <q-icon name="fa-file-archive-o" />
                       </q-btn>
-                     <!--q-btn round small flat color="primary" v-if="!item.dayCommentTitle==''">
+                     <q-btn round small flat color="primary" v-if="!item.dayCommentTitle==''">
                         <q-icon name="fa-comments" />
                         <q-tooltip>
                         {{item.dayCommentTitle}}
                       </q-tooltip>
-                    </q-btn-->
+                      </q-btn>
                    </q-item-main>
                    <q-item-side right>
-                       <q-item-tile label v-if="item.examType===null">
-                        <q-btn round outline :color="ratingColor(item.scores[0].score)" v-if="item.scores.length>0" @click="showModal(item.scores[0].score)">
-                        <big >{{item.scores[0].score}}</big>
+                       <q-item-tile label v-if="!item.dayRatingExam">
+                        <q-btn round outline :color="ratingColor(item.dayRating)" v-if="!item.dayRating==''" @click="showModal(item.dayRating)">
+                        <big >{{item.dayRating}}</big>
                           <q-tooltip>
                         {{createRatingTooltipTxt(item)}}
                       </q-tooltip>
                       </q-btn>
                       </q-item-tile>
-                      <q-item-tile label v-if="item.examType!==null">
-                        <q-btn round :color="ratingColor(item.scores[0].score)" v-if="item.scores.length>0" @click="showModal(item.scores[0].score)">
-                        <big >{{item.scores[0].score}}</big>
+                      <q-item-tile label v-if="item.dayRatingExam">
+                        <q-btn round :color="ratingColor(item.dayRating)" v-if="!item.dayRating==''" @click="showModal(item.dayRating)">
+                        <big >{{item.dayRating}}</big>
                           <q-tooltip>
                         {{createRatingTooltipTxt(item)}}
                       </q-tooltip>
                       </q-btn>
-                      <q-btn round color="secondary" v-if="item.examType!==null">
+                      <q-btn round color="secondary" v-if="item.dayRating===''">
                         <big > K </big>
                           <q-tooltip>
                         {{createRatingTooltipTxt(item)}}
                       </q-tooltip>
                       </q-btn>
                       </q-item-tile>
-                    </q-item-side>
+                     </q-item-side>
                  </q-item>
                  <q-item-separator/>
                </q-list>
             </q-card-main>
-            <!--q-card-separator /-->
-            <!--q-card-actions align="around">
+            <q-card-separator />
+            <q-card-actions align="around">
               <q-btn flat round small color="primary" @click="shDiarySchedule(data)">
                 <q-icon name="fa-clock-o" />
               </q-btn>
@@ -143,7 +107,7 @@
               <q-btn flat round small  color="primary" @click="showLog">
                 <q-icon name="fa-info" />
               </q-btn>
-            </q-card-actions-->
+            </q-card-actions>
          </q-card>
       </div>
    </div>
@@ -279,8 +243,8 @@ export default {
     }
   },
   methods: {
-    formatDate (time) {
-      return (new Date(time).getHours()) + ':' + (new Date(time).getMinutes())
+    formatDate (str) {
+      return str.substring(0, 5)
     },
     teacherFIO (lesson) {
       let fio = ''
@@ -326,7 +290,7 @@ export default {
       if (item.dayRatingTitle !== '') {
         rrt = item.dayRatingTitle
       }
-      else if (item.dayRatingTitle === '' || item.dayRating !== '') {
+      else if (item.dayRatingTitle === '' && item.dayRating !== '') {
         rrt = item.dayRating
       }
       return rrt
@@ -337,8 +301,7 @@ export default {
       this.$store.dispatch('getDiaryDataFR', {
         userID: this.$store.state.user.uid,
         date: this.$store.state.diaryData.nextDateLink,
-        wd: this.$store.state.diaryData.wid,
-        eduYearId: this.$store.state.diaryData.eduYearId
+        wd: this.$store.state.diaryData.wid
       })
     },
     getPrev () {
@@ -346,8 +309,7 @@ export default {
         {
           userID: this.$store.state.user.uid,
           date: this.$store.state.diaryData.prevDateLink,
-          wd: this.$store.state.diaryData.wid,
-          eduYearId: this.$store.state.diaryData.eduYearId
+          wd: this.$store.state.diaryData.wid
         })
     }
   },
@@ -390,8 +352,6 @@ export default {
 .q-item
   margin: 1rem 0 1rem 0
   border-bottom: 2px solid #efefef
-.no-border-bottom
-  border-bottom: none
 .m-l-10
   margin-left: 10px
 .docs-chip .q-chip
@@ -412,8 +372,4 @@ export default {
 .name-header
   color: #747474
   // text-shadow: 0px 2px #00635a
-.item-italic
-  font-style: italic;
-.black-color
-  color:#0c0c0c
 </style>
