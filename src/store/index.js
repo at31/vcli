@@ -28,7 +28,9 @@ const state = {
     prevDateLink: '',
     nextDateLink: '',
     pdata: '',
-    wd: ''
+    wd: '',
+    currentYear: '',
+    studentFIO: ''
   },
   report: {
     htmldata: {}
@@ -129,7 +131,9 @@ const actions = {
         studentID: data.userID,
         date: data.date,
         wd: data.wd,
-        eduYearId: data.eduYearId
+        eduYearId: data.eduYearId,
+        currentYear: data.currentYear,
+        studentFIO: data.studentFIO
       })
       .then(resp => {
         if (resp.status === 200) {
