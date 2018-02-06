@@ -27,9 +27,7 @@
                <!--q-btn slot="right" flat round color="white" @click="shDiarySchedule(data)">
                  <q-icon name="fa-clock-o" />
                </q-btn-->
-               <q-btn slot="right" flat round color="white" @click="">
-                <q-icon name="share" />
-              </q-btn>
+
             </q-card-title>
             <q-card-separator />
             <q-card-main v-show="data.selected">
@@ -113,11 +111,16 @@
             <!--q-card-separator /-->
             <q-card-actions align="around">
               <q-btn  round flat color="tertiary" @click="shDiarySchedule(data)">
-                <q-icon name="fa-clock-o" />
+                <q-icon name="fa-clock" />
               </q-btn>
               <q-btn  round flat  color="positive" @click="shLessonsTheme(data)">
                 <q-icon name="fa-info" />
               </q-btn>
+              <a :href="data.tbotlink" target="_blank">
+              <q-btn slot="right" flat round color="blue">
+               <q-icon name="fa-share-alt"/>
+             </q-btn>
+             </a>
             </q-card-actions>
             <br>
          </q-card>
@@ -339,22 +342,15 @@ export default {
           currentYear: this.$store.state.diaryData.currentYear,
           studentFIO: this.$store.state.diaryData.studentFIO
         })
+    },
+    sendToTlelga (data) {
+      return 'https://t.me/VCLI_BOT?start=start-111'
     }
   },
   created () {
   },
   mounted () {
-    if (!this.$store.state.user.login) {
-      this.$router.push({
-        path: '/',
-        params: {
-          hi: 'hi @at31 '
-        }
-      })
-    }
-    else {
-      this.$store.dispatch('getDiaryData')
-    }
+
   },
   beforeDestroy () {
 

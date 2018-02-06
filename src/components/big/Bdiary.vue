@@ -349,17 +349,7 @@ export default {
   created () {
   },
   mounted () {
-    if (!this.$store.state.user.login) {
-      this.$router.push({
-        path: '/',
-        params: {
-          hi: 'hi @at31 '
-        }
-      })
-    }
-    else {
-      this.$store.dispatch('getDiaryData')
-    }
+
   },
   beforeDestroy () {
 

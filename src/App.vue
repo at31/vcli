@@ -28,7 +28,7 @@
       <q-list no-border link inset-delimiter>
         <q-list-header>VSOpen-mirror menus</q-list-header>
         <q-item @click="">
-          <q-item-side icon="fa-sign-in" />
+          <q-item-side icon="fa-sign-in-alt" />
           <q-side-link to="/">
             <q-item-main label="Авторизация" sublabel="авторизация (логин и пароль)" />
           </q-side-link>
