@@ -133,10 +133,12 @@
    </div>
 
 
-    <q-modal v-model="open">
-      <q-btn color="primary" @click="open = false" label="Close" />
-      <div style="width:100%;height:0;padding-bottom:100%;position:relative;"><iframe :src="gifLink" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div>
-    </q-modal>
+   <q-modal v-model="modalopen">
+     <q-btn color="primary" @click="closeModal()" label="Close" icon="fa-times"/>
+     <div style="width:100%;height:0;padding-bottom:100%;position:relative;">
+       <img :src="gifLink" class="responsive">
+     </div>
+   </q-modal>
 
   </div>
 </template>
@@ -198,7 +200,7 @@ export default {
       selected: undefined,
       sdview: true,
       dvisible: [],
-      open: false,
+      modalopen: false,
       ndconfig: {
         rowHeight: '30px',
         /*
@@ -270,6 +272,10 @@ export default {
     }
   },
   methods: {
+    closeModal () {
+      this.modalopen = false
+      this.gifLink = ''
+    },
     formatDate (time) {
       return (new Date(time).getHours()) + ':' + (new Date(time).getMinutes())
     },

@@ -11,8 +11,8 @@ const spinner = {
   message: '',
   messageColor: 'black'
 }
-const REST_SERVER_ADDRESS = 'http://192.168.1.173:3000'
-// const REST_SERVER_ADDRESS = 'http://93.157.144.178:3000'
+// const REST_SERVER_ADDRESS = 'http://192.168.1.173:3000'
+const REST_SERVER_ADDRESS = 'http://93.157.144.178:3000'
 
 const state = {
   _diaryData: '', // [{}, {}, {}, {}, {}, {}, {}],
@@ -166,7 +166,7 @@ const actions = {
   // f4m2bZ3A7ec9acqcPlPTFREn3HSaSS8a
   // https://developers.giphy.com/dashboard/
   getGIPHY (context, wrd) {
-    axios.get(`http://api.giphy.com/v1/gifs/search?q=${wrd}&api_key=f4m2bZ3A7ec9acqcPlPTFREn3HSaSS8a=1`)
+    axios.get(`${REST_SERVER_ADDRESS}/helper/gif/${wrd}`)
       .then(resp => {
         if (resp.status === 200) {
           context.commit('SET_GIPHY', resp.data)
@@ -222,7 +222,11 @@ const mutations = {
     */
   },
   SET_GIPHY (state, data) {
-    state.gifLink = data[0].images.original.url
+    let img = new Image()
+    img.onload = () => {
+      state.gifLink = data.images.original.gif_url
+    }
+    img.src = data.images.original.gif_url
   }
 
 }

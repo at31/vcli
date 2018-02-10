@@ -62,7 +62,8 @@
                    </q-item-main>
                    <q-item-side right>
                        <q-item-tile label v-if="item.examType===null">
-                        <q-btn small round outline :color="ratingColor(item.scores[0].score)" v-if="item.scores.length>0" @click="showModal(item.scores[0].score)">
+                        <q-btn v-model="item.showscoregif" loader small round outline :color="ratingColor(item.scores[0].score)" v-if="item.scores.length>0" @click="showModal(item)">
+                        <q-spinner-mat slot="loading"></q-spinner-mat>
                         <big >{{item.scores[0].score}}</big>
                           <q-tooltip>
                         {{createRatingTooltipTxt(item)}}
@@ -70,7 +71,8 @@
                       </q-btn>
                       </q-item-tile>
                       <q-item-tile label v-if="item.examType!==null">
-                        <q-btn small round :color="ratingColor(item.scores[0].score)" v-if="item.scores.length>0" @click="showModal(item.scores[0].score)">
+                        <q-btn v-model="item.showscoregif" loader small round :color="ratingColor(item.scores[0].score)" v-if="item.scores.length>0" @click="showModal(item)">
+                        <q-spinner-mat slot="loading"></q-spinner-mat>
                         <big >{{item.scores[0].score}}</big>
                           <q-tooltip>
                         {{createRatingTooltipTxt(item)}}
@@ -128,10 +130,12 @@
    </div>
 
 
-    <q-modal v-model="open">
-      <q-btn color="primary" @click="open = false" label="Close" />
-      <div style="width:100%;height:0;padding-bottom:100%;position:relative;"><iframe :src="gifLink" width="100%" height="100%" style="position:absolute" frameBorder="0" class="giphy-embed" allowFullScreen></iframe></div>
-    </q-modal>
+   <q-modal ref="modalgif" minimized>
+     <q-btn color="primary" @click="closeModal()" label="Close" icon="fa-times"/>
+     <div style="width:100%;height:0;padding-bottom:100%;position:relative;">
+       <img :src="gifLink" class="responsive">
+     </div>
+   </q-modal>
 
   </div>
 </template>
@@ -159,7 +163,8 @@ import {
   QSelect,
   QChip,
   QTooltip,
-  QIcon
+  QIcon,
+  QSpinnerMat
 } from 'quasar'
 
 export default {
@@ -186,14 +191,15 @@ export default {
     QSelect,
     QChip,
     QTooltip,
-    QIcon
+    QIcon,
+    QSpinnerMat
   },
   data () {
     return {
       selected: undefined,
       sdview: true,
       dvisible: [],
-      open: false,
+      scoregif: [],
       ndconfig: {
         rowHeight: '30px',
         /*
@@ -217,6 +223,15 @@ export default {
     }
   },
   watch: {
+    gifLink: function (n) {
+      this.scoregif.forEach((el) => {
+        this.$set(el, 'showscoregif', false)
+      })
+      this.scoregif = []
+      this.$nextTick(function () {
+        this.$refs.modalgif.open()
+      })
+    },
     diaryData: function (n) {
 
     },
@@ -265,6 +280,9 @@ export default {
     }
   },
   methods: {
+    closeModal () {
+      this.$refs.modalgif.close()
+    },
     formatDate (time) {
       return (new Date(time).getHours()) + ':' + (new Date(time).getMinutes())
     },
@@ -289,14 +307,15 @@ export default {
     showLog (info) {
       console.log(this)
     },
-    showModal (rating) {
+    showModal (item) {
       // console.log(cell)
+      this.scoregif.push(item)
+      this.$set(item, 'showscoregif', true)
       let wrd = 'congratulations'
-      if (rating < 3) {
+      if (item.scores[0].score < 4) {
         wrd = 'sad'
       }
       this.$store.dispatch('getGIPHY', wrd)
-      this.open = true
     },
     ratingColor (rating) {
       let rcolor = 'green'

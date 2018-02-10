@@ -15,7 +15,7 @@
             </q-card-main>
             <q-card-separator />
             <q-card-actions>
-              <q-btn color="secondary" icon="fa-sign-in" @click="doLogin">
+              <q-btn color="secondary" icon="fa-sign-in-alt" @click="doLogin">
                 Логин
               </q-btn>
             </q-card-actions>
