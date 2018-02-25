@@ -7,7 +7,8 @@
     </div>
     <div class="row ">
       <h5 class="name-header">
-          {{studentFIO}}
+          Дневник ученика Учеников Ученик.
+          <!--{{studentFIO}}-->
       </h5>
     </div>
    <div class="row btns ">
@@ -24,18 +25,18 @@
          <q-card >
             <q-card-title>
                {{data.title}}
-               <q-btn slot="right" flat round color="white" @click="shDiarySchedule(data)">
-                 <q-icon name="fa-clock-o" />
-               </q-btn>
-               <q-btn slot="right" flat round color="white" @click="">
-                <q-icon name="fa-share-alt" />
+               <a :href="data.tbotlink" target="_blank" style="float:right">
+               <q-btn slot="right" flat round color="white">
+                <q-icon name="fa-share-alt"/>
               </q-btn>
+              </a>
+
             </q-card-title>
             <q-card-separator />
             <q-card-main v-show="data.selected">
               <q-list>
                 <q-list-header></q-list-header>
-                <q-item multiline v-for="(lesson, indx) in data.data" :key="lesson.index">
+                <q-item multiline v-for="(lesson, indx) in data.data" :key="data.index" class="border-bottom">
                   <q-item-side>
                     <q-chip color="light" class="text-black">
                       {{indx+1}}
@@ -53,44 +54,19 @@
             <q-card-main v-show="!data.selected">
                <q-list>
                  <q-list-header></q-list-header>
-                 <q-item multiline v-for="item in data.data" :key="item.index">
+                 <div v-for="item in data.data" :key=" item.index" class="border-bottom">
+                 <q-item multiline class="no-border-bottom">
                    <q-item-side><q-chip color="light" class="text-black">
                       {{item.number}}
                    </q-chip>
                  </q-item-side>
                    <q-item-main>
                      <q-item-tile label>{{item.subject.name}}</q-item-tile>
-
-                     <q-item  class="no-border-bottom" v-if="item.theme!==null">
-                       <q-item-side>
-                         <q-item-tile color="secondary" icon="fa-star" />
-                       </q-item-side>
-                       <q-item-main>
-                         <q-item-tile sublabel class="item-italic">{{item.theme}}</q-item-tile>
-                       </q-item-main>
-                     </q-item>
-
-                     <q-item v-if="item.homework!=='' && item.homework!==null" class="no-border-bottom">
-                       <q-item-side>
-                         <q-item-tile color="primary" icon="fa-book" />
-                       </q-item-side>
-                       <q-item-main>
-                         <q-item-tile sublabel class="black-color">{{item.homework}}</q-item-tile>
-                       </q-item-main>
-                     </q-item>
-                     <q-btn round small flat color="primary" v-if="item.homeworkFiles.length>0">
-                        <q-icon name="fa-file-archive-o" />
-                      </q-btn>
-                     <!--q-btn round small flat color="primary" v-if="!item.dayCommentTitle==''">
-                        <q-icon name="fa-comments" />
-                        <q-tooltip>
-                        {{item.dayCommentTitle}}
-                      </q-tooltip>
-                    </q-btn-->
                    </q-item-main>
                    <q-item-side right>
                        <q-item-tile label v-if="item.examType===null">
-                        <q-btn round outline :color="ratingColor(item.scores[0].score)" v-if="item.scores.length>0" @click="showModal(item.scores[0].score)">
+                        <q-btn v-model="item.showscoregif" loader small round outline :color="ratingColor(item.scores[0].score)" v-if="item.scores.length>0" @click="showModal(item)">
+                        <q-spinner-mat slot="loading"></q-spinner-mat>
                         <big >{{item.scores[0].score}}</big>
                           <q-tooltip>
                         {{createRatingTooltipTxt(item)}}
@@ -98,13 +74,14 @@
                       </q-btn>
                       </q-item-tile>
                       <q-item-tile label v-if="item.examType!==null">
-                        <q-btn round :color="ratingColor(item.scores[0].score)" v-if="item.scores.length>0" @click="showModal(item.scores[0].score)">
+                        <q-btn v-model="item.showscoregif" loader small round :color="ratingColor(item.scores[0].score)" v-if="item.scores.length>0" @click="showModal(item)">
+                        <q-spinner-mat slot="loading"></q-spinner-mat>
                         <big >{{item.scores[0].score}}</big>
                           <q-tooltip>
                         {{createRatingTooltipTxt(item)}}
                       </q-tooltip>
                       </q-btn>
-                      <q-btn round color="secondary" v-if="item.examType!==null">
+                      <q-btn small round color="secondary" v-if="item.examType!==null">
                         <big > K </big>
                           <q-tooltip>
                         {{createRatingTooltipTxt(item)}}
@@ -113,27 +90,46 @@
                       </q-item-tile>
                     </q-item-side>
                  </q-item>
+
+                 <q-item  class="no-border-bottom" v-if="item.theme!==null && data.showTheme">
+                   <q-item-side>
+                     <q-item-tile color="secondary" icon="fa-info" />
+                   </q-item-side>
+                   <q-item-main>
+                     <q-item-tile sublabel class="item-italic">{{item.theme}}</q-item-tile>
+                   </q-item-main>
+                 </q-item>
+
+                 <q-item v-if="item.homework!=='' && item.homework!==null" class="no-border-bottom">
+                   <q-item-side>
+                     <q-item-tile color="primary" icon="fa-book" />
+                   </q-item-side>
+                   <q-item-main>
+                     <q-item-tile sublabel class="black-color">{{item.homework}}</q-item-tile>
+                   </q-item-main>
+                 </q-item>
+
+               </div>
                  <q-item-separator/>
                </q-list>
             </q-card-main>
             <!--q-card-separator /-->
-            <!--q-card-actions align="around">
-              <q-btn flat round small color="primary" @click="shDiarySchedule(data)">
-                <q-icon name="fa-clock-o" />
+            <q-card-actions align="around">
+              <q-btn  round flat color="tertiary" @click="shDiarySchedule(data)">
+                <q-icon name="fa-clock" />
               </q-btn>
-              <q-btn flat round small  color="primary">
-                <q-icon name="fa-comments" />
-              </q-btn>
-              <q-btn flat round small  color="primary" @click="showLog">
+              <q-btn  round flat  color="positive" @click="shLessonsTheme(data)">
                 <q-icon name="fa-info" />
               </q-btn>
-            </q-card-actions-->
+
+            </q-card-actions>
+            <br>
          </q-card>
       </div>
    </div>
 
 
-   <q-modal v-model="modalopen">
+   <q-modal ref="modalgif" minimized>
      <q-btn color="primary" @click="closeModal()" label="Close" icon="fa-times"/>
      <div style="width:100%;height:0;padding-bottom:100%;position:relative;">
        <img :src="gifLink" class="responsive">
@@ -166,7 +162,8 @@ import {
   QSelect,
   QChip,
   QTooltip,
-  QIcon
+  QIcon,
+  QSpinnerMat
 } from 'quasar'
 
 export default {
@@ -193,14 +190,15 @@ export default {
     QSelect,
     QChip,
     QTooltip,
-    QIcon
+    QIcon,
+    QSpinnerMat
   },
   data () {
     return {
       selected: undefined,
       sdview: true,
       dvisible: [],
-      modalopen: false,
+      scoregif: [],
       ndconfig: {
         rowHeight: '30px',
         /*
@@ -224,6 +222,15 @@ export default {
     }
   },
   watch: {
+    gifLink: function (n) {
+      this.scoregif.forEach((el) => {
+        this.$set(el, 'showscoregif', false)
+      })
+      this.scoregif = []
+      this.$nextTick(function () {
+        this.$refs.modalgif.open()
+      })
+    },
     diaryData: function (n) {
 
     },
@@ -273,8 +280,7 @@ export default {
   },
   methods: {
     closeModal () {
-      this.modalopen = false
-      this.gifLink = ''
+      this.$refs.modalgif.close()
     },
     formatDate (time) {
       return (new Date(time).getHours()) + ':' + (new Date(time).getMinutes())
@@ -294,17 +300,21 @@ export default {
     shDiarySchedule (data) {
       this.$set(data, 'selected', !data.selected)
     },
+    shLessonsTheme (data) {
+      this.$set(data, 'showTheme', !data.showTheme)
+    },
     showLog (info) {
       console.log(this)
     },
-    showModal (rating) {
-      // console.log(cell)
+    showModal (item) {
+      console.log(item)
+      this.scoregif.push(item)
+      this.$set(item, 'showscoregif', true)
       let wrd = 'congratulations'
-      if (rating < 3) {
+      if (item.scores[0].score < 4) {
         wrd = 'sad'
       }
       this.$store.dispatch('getGIPHY', wrd)
-      this.open = true
     },
     ratingColor (rating) {
       let rcolor = 'green'
@@ -350,6 +360,9 @@ export default {
           currentYear: this.$store.state.diaryData.currentYear,
           studentFIO: this.$store.state.diaryData.studentFIO
         })
+    },
+    sendToTlelga (data) {
+      return 'https://t.me/VCLI_BOT?start=start-111'
     }
   },
   created () {

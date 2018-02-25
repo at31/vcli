@@ -7,7 +7,8 @@
     </div>
     <div class="row ">
       <h5 class="name-header">
-          {{studentFIO}}
+        Дневник ученика Учеников Ученик.
+          <!--{{studentFIO}}-->
       </h5>
     </div>
    <div class="row btns ">
